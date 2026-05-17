@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1e3a8a">
-    <title>Conversor UYU/USD/BRL/EUR</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>Conversor UYU/USD/BR/EUR</title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="./icon-192.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -36,19 +36,14 @@
             font-size: 14px;
             margin-bottom: 24px;
         }
-        .input-group {
-            margin-bottom: 20px;
-        }
+        .input-group { margin-bottom: 20px; }
         label {
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
             color: #374151;
         }
-        .input-row {
-            display: flex;
-            gap: 12px;
-        }
+        .input-row { display: flex; gap: 12px; }
         input[type="number"] {
             flex: 1;
             padding: 14px;
@@ -83,10 +78,7 @@
             margin-bottom: 24px;
         }
         .btn-actualizar:active { background: #1e40af; }
-        .resultados {
-            display: grid;
-            gap: 12px;
-        }
+        .resultados { display: grid; gap: 12px; }
         .resultado-item {
             background: #f9fafb;
             padding: 16px;
@@ -96,10 +88,7 @@
             align-items: center;
             border-left: 4px solid #3b82f6;
         }
-        .moneda-label {
-            font-weight: 600;
-            color: #374151;
-        }
+        .moneda-label { font-weight: 600; color: #374151; }
         .moneda-valor {
             font-size: 20px;
             font-weight: 700;
@@ -132,7 +121,7 @@
 <body>
     <div class="container">
         <h1>Conversor de Monedas</h1>
-        <p class="subtitle">UYU · USD · BRL · EUR</p>
+        <p class="subtitle">UYU · USD · BR · EUR</p>
         
         <div class="input-group">
             <label for="monto">Monto a convertir</label>
@@ -172,6 +161,13 @@
             EUR: '€'
         };
 
+        const nombres = {
+            UYU: 'UY',
+            USD: 'USA',
+            BRL: 'BR',
+            EUR: 'EUR'
+        };
+
         async function cargarTasas() {
             try {
                 const res = await fetch('https://open.er-api.com/v6/latest/USD');
@@ -205,7 +201,7 @@
                 const valor = montoEnUSD * tasas[moneda];
                 html += `
                     <div class="resultado-item">
-                        <span class="moneda-label">${moneda}</span>
+                        <span class="moneda-label">${nombres[moneda]}</span>
                         <span class="moneda-valor">${simbolos[moneda]} ${valor.toFixed(2)}</span>
                     </div>
                 `;
@@ -220,9 +216,8 @@
         document.getElementById('monto').addEventListener('input', convertir);
         document.getElementById('moneda-origen').addEventListener('change', convertir);
 
-        // Registrar Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('./sw.js');
         }
 
         cargarTasas();
