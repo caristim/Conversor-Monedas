@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1e3a8a">
     <title>Conversor UYU/USD/BR/EUR</title>
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="./icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -16,7 +16,7 @@
             padding: 20px;
             color: #1f2937;
         }
-        .container {
+       .container {
             max-width: 480px;
             margin: 0 auto;
             background: white;
@@ -30,20 +30,20 @@
             font-size: 24px;
             margin-bottom: 8px;
         }
-        .subtitle {
+       .subtitle {
             text-align: center;
             color: #6b7280;
             font-size: 14px;
             margin-bottom: 24px;
         }
-        .input-group { margin-bottom: 20px; }
+       .input-group { margin-bottom: 20px; }
         label {
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
             color: #374151;
         }
-        .input-row { display: flex; gap: 12px; }
+       .input-row { display: flex; gap: 12px; }
         input[type="number"] {
             flex: 1;
             padding: 14px;
@@ -65,7 +65,7 @@
             cursor: pointer;
             min-width: 120px;
         }
-        .btn-actualizar {
+       .btn-actualizar {
             width: 100%;
             padding: 14px;
             background: #1e3a8a;
@@ -77,9 +77,9 @@
             cursor: pointer;
             margin-bottom: 24px;
         }
-        .btn-actualizar:active { background: #1e40af; }
-        .resultados { display: grid; gap: 12px; }
-        .resultado-item {
+       .btn-actualizar:active { background: #1e40af; }
+       .resultados { display: grid; gap: 12px; }
+       .resultado-item {
             background: #f9fafb;
             padding: 16px;
             border-radius: 12px;
@@ -88,13 +88,13 @@
             align-items: center;
             border-left: 4px solid #3b82f6;
         }
-        .moneda-label { font-weight: 600; color: #374151; }
-        .moneda-valor {
+       .moneda-label { font-weight: 600; color: #374151; }
+       .moneda-valor {
             font-size: 20px;
             font-weight: 700;
             color: #1e3a8a;
         }
-        .info {
+       .info {
             margin-top: 20px;
             padding: 12px;
             background: #eff6ff;
@@ -103,14 +103,14 @@
             color: #1e40af;
             text-align: center;
         }
-        .disclaimer {
+       .disclaimer {
             margin-top: 12px;
             font-size: 11px;
             color: #6b7280;
             text-align: center;
             line-height: 1.5;
         }
-        .actualizacion {
+       .actualizacion {
             font-size: 12px;
             color: #6b7280;
             text-align: center;
@@ -122,7 +122,7 @@
     <div class="container">
         <h1>Conversor de Monedas</h1>
         <p class="subtitle">UYU · USD · BR · EUR</p>
-        
+
         <div class="input-group">
             <label for="monto">Monto a convertir</label>
             <div class="input-row">
@@ -141,7 +141,7 @@
         <div class="resultados" id="resultados"></div>
 
         <div class="actualizacion" id="actualizacion"></div>
-        
+
         <div class="info">
             Cotización promedio BCU, BROU y mercado
         </div>
@@ -153,7 +153,7 @@
 
     <script>
         let tasas = {};
-        
+
         const simbolos = {
             UYU: '$U',
             USD: 'U$',
@@ -183,7 +183,7 @@
 
         function mostrarActualizacion(fecha) {
             const d = new Date(fecha);
-            document.getElementById('actualizacion').textContent = 
+            document.getElementById('actualizacion').textContent =
                 `Última actualización: ${d.toLocaleString('es-UY')}`;
         }
 
@@ -191,11 +191,11 @@
             const monto = parseFloat(document.getElementById('monto').value) || 0;
             const origen = document.getElementById('moneda-origen').value;
             const monedas = ['UYU', 'USD', 'BRL', 'EUR'];
-            
+
             if (!tasas.USD) return;
-            
-            const montoEnUSD = origen === 'USD' ? monto : monto / tasas[origen];
-            
+
+            const montoEnUSD = origen === 'USD'? monto : monto / tasas[origen];
+
             let html = '';
             monedas.forEach(moneda => {
                 const valor = montoEnUSD * tasas[moneda];
@@ -217,7 +217,7 @@
         document.getElementById('moneda-origen').addEventListener('change', convertir);
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js');
+            navigator.serviceWorker.register('sw.js');
         }
 
         cargarTasas();
