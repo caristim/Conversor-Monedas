@@ -1,4 +1,4 @@
-const CACHE_NAME = 'conversor-v1';
+const CACHE_NAME = 'conversor-v2';
 const urlsToCache = [
   './',
   './index.html',
