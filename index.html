@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e3a8a">
+    <title>Conversor UYU/USD/BRL/EUR</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+        input[type="number"] {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        select {
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            min-width: 120px;
+        }
+        .btn-actualizar {
+            width: 100%;
+            padding: 14px;
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 24px;
+        }
+        .btn-actualizar:active { background: #1e40af; }
+        .resultados {
+            display: grid;
+            gap: 12px;
+        }
+        .resultado-item {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #3b82f6;
+        }
+        .moneda-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        .moneda-valor {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 12px;
+            background: #eff6ff;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #1e40af;
+            text-align: center;
+        }
+        .disclaimer {
+            margin-top: 12px;
+            font-size: 11px;
+            color: #6b7280;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .actualizacion {
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conversor de Monedas</h1>
+        <p class="subtitle">UYU · USD · BRL · EUR</p>
+        
+        <div class="input-group">
+            <label for="monto">Monto a convertir</label>
+            <div class="input-row">
+                <input type="number" id="monto" value="0.00" step="0.01" min="0">
+                <select id="moneda-origen">
+                    <option value="UYU">UY $U</option>
+                    <option value="USD">USA U$</option>
+                    <option value="BRL">BR R$</option>
+                    <option value="EUR">EUR €</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-actualizar" onclick="actualizarTasas()">Actualizar tasas</button>
+
+        <div class="resultados" id="resultados"></div>
+
+        <div class="actualizacion" id="actualizacion"></div>
+        
+        <div class="info">
+            Cotización promedio BCU, BROU y mercado
+        </div>
+        <div class="disclaimer">
+            Valor informativo. Las tasas se actualizan diariamente.<br>
+            Para operaciones oficiales consulte BCU o BROU.
+        </div>
+    </div>
+
+    <script>
+        let tasas = {};
+        
+        const simbolos = {
+            UYU: '$U',
+            USD: 'U$',
+            BRL: 'R$',
+            EUR: '€'
+        };
+
+        async function cargarTasas() {
+            try {
+                const res = await fetch('https://open.er-api.com/v6/latest/USD');
+                const data = await res.json();
+                tasas = data.rates;
+                tasas.USD = 1;
+                mostrarActualizacion(data.time_last_update_utc);
+                convertir();
+            } catch (e) {
+                document.getElementById('resultados').innerHTML = '<p style="text-align:center;color:#dc2626">Error al cargar tasas. Verificá tu conexión.</p>';
+            }
+        }
+
+        function mostrarActualizacion(fecha) {
+            const d = new Date(fecha);
+            document.getElementById('actualizacion').textContent = 
+                `Última actualización: ${d.toLocaleString('es-UY')}`;
+        }
+
+        function convertir() {
+            const monto = parseFloat(document.getElementById('monto').value) || 0;
+            const origen = document.getElementById('moneda-origen').value;
+            const monedas = ['UYU', 'USD', 'BRL', 'EUR'];
+            
+            if (!tasas.USD) return;
+            
+            const montoEnUSD = origen === 'USD' ? monto : monto / tasas[origen];
+            
+            let html = '';
+            monedas.forEach(moneda => {
+                const valor = montoEnUSD * tasas[moneda];
+                html += `
+                    <div class="resultado-item">
+                        <span class="moneda-label">${moneda}</span>
+                        <span class="moneda-valor">${simbolos[moneda]} ${valor.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('resultados').innerHTML = html;
+        }
+
+        function actualizarTasas() {
+            cargarTasas();
+        }
+
+        document.getElementById('monto').addEventListener('input', convertir);
+        document.getElementById('moneda-origen').addEventListener('change', convertir);
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        cargarTasas();
+    </script>
+</body>
+</html>
